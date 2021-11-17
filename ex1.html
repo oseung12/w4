@@ -9,6 +9,34 @@
 <!-- 지도를 표시할 div 입니다 -->
 <div id="map" style="width:100vw;height:50vh;"></div>
 <div id="result"></div>
+
+<!--menuDiv class 의 <a> 의 스타일 -->
+<style>
+    .menuDiv {
+        display: flex;
+        margin: 50px;
+        justify-content: space-between;
+    }
+
+    .menuDiv > a  {
+        text-decoration: none;
+        background-color: blue;
+        color: white;
+        font-size: large;
+        border-radius: 3px;
+        padding: 10px;
+    }
+
+
+</style>
+
+<!--menuDiv 에만 이벤트 걸기-->
+<div class="menuDiv">
+    <a href="전체">전체</a>
+    <a href="한식">한식</a>
+    <a href="일식">일식</a>
+</div>
+
 <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=a9802ad3e103bb98ba94ae317f2dc287"></script>
 <script>
     var mapContainer = document.getElementById('map'), // 지도를 표시할 div
@@ -36,25 +64,63 @@
 
     });
 
+    const markerArr = []
+
     function showMarkers(stores){
+
+        //기존 마커들은 지워야한다.
+        for (let i = 0; i < markerArr.length ; i++) {
+            markerArr[i].setMap(null)
+        }
 
         for (let i = 0; i <stores.length ; i++) {
             const store = stores[i]
             const latLng = new kakao.maps.LatLng(store.lat, store.lng);
             const marker = new kakao.maps.Marker({
                 map:map,
-                position: latLng
+                position: latLng,
+                title: store.name
             })
+            markerArr.push(marker)
         }//end for
     }
 
     const arr = [
-        {name:'이문설농탕' , lat:37.572904 , lng:126.983852  , menu:'설렁탕'},
-        {name:'오봉집' ,    lat:37.577217 , lng:126.830762  , menu:'보쌈'},
-        {name:'양문소갈비' , lat:37.543287 , lng:126.971765 ,  menu:'갈비'},
+        {name:'이문설농탕' ,      lat:37.572904 ,  lng:126.983852 ,  menu:'한식'},
+        {name:'오봉집' ,         lat:37.577217 ,  lng:126.830762 ,  menu:'한식'},
+        {name:'양문소갈비' ,      lat:37.543287 ,  lng:126.971765 ,  menu:'한식'},
+        {name:'계절향기' ,        lat:37.532629 ,  lng:126.735993 ,  menu:'일식'},
+        {name:'카와카츠오토코' ,   lat:37.551795 ,  lng:126.917529 ,  menu:'일식'},
+        {name:'오복수산' ,        lat:37.537678 ,  lng:127.001896 ,  menu:'일식'},
     ]
 
-    
+//menuDiv에 이벤트가 걸려있다
+
+    document.querySelector(".menuDiv").addEventListener("click", (e) => {
+        e.preventDefault()
+        e.stopPropagation()
+
+        const target = e.target  //실제로 이벤트가 발생하는 것이 타겟이다.
+
+//a 태그에만 이벤트를 걸어준다.
+        if(target.tagName !== 'A') {
+            return
+        }
+        console.log("A태그 클릭")
+//href 의 값을 불러온다
+        const keyword = target.getAttribute("href")
+
+        if(keyword !== '전체'){
+            const result = arr.filter(s => s.menu === keyword)
+
+            showMarkers(result)
+        }else {
+            showMarkers(arr)
+        }
+
+
+    },false)
+
 </script>
 
 </body>
