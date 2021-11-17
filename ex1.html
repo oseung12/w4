@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>지도 생성하기</title>
+
+</head>
+<body>
+<!-- 지도를 표시할 div 입니다 -->
+<div id="map" style="width:100vw;height:50vh;"></div>
+<div id="result"></div>
+<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=a9802ad3e103bb98ba94ae317f2dc287"></script>
+<script>
+    var mapContainer = document.getElementById('map'), // 지도를 표시할 div
+        mapOption = {
+            center: new kakao.maps.LatLng(37.4988972,127.0301971), // 지도의 중심좌표
+            level: 4 // 지도의 확대 레벨
+        };
+
+    // 지도를 표시할 div와  지도 옵션으로  지도를 생성합니다
+    var map = new kakao.maps.Map(mapContainer, mapOption);
+</script>
+
+<script>
+
+    kakao.maps.event.addListener(map, 'click', function(mouseEvent) {
+
+        // 클릭한 위도, 경도 정보를 가져옵니다
+        var latlng = mouseEvent.latLng;
+
+        var message = '클릭한 위치의 위도는 ' + latlng.getLat() + ' 이고, ';
+        message += '경도는 ' + latlng.getLng() + ' 입니다';
+
+        var resultDiv = document.getElementById('result');
+        resultDiv.innerHTML = message;
+
+    });
+
+    function showMarkers(stores){
+
+        for (let i = 0; i <stores.length ; i++) {
+            const store = stores[i]
+            const latLng = new kakao.maps.LatLng(store.lat, store.lng);
+            const marker = new kakao.maps.Marker({
+                map:map,
+                position: latLng
+            })
+        }//end for
+    }
+
+    const arr = [
+        {name:'이문설농탕' , lat:37.572904 , lng:126.983852  , menu:'설렁탕'},
+        {name:'오봉집' ,    lat:37.577217 , lng:126.830762  , menu:'보쌈'},
+        {name:'양문소갈비' , lat:37.543287 , lng:126.971765 ,  menu:'갈비'},
+    ]
+
+    
+</script>
+
+</body>
+</html>
